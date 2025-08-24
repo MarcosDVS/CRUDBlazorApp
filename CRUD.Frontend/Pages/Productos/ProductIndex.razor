@@ -1,0 +1,17 @@
+﻿<!--
+Componente ProductIndex
+Se encarga de administrar la lista de productos en el frontend.
+- productos: almacena todos los productos cargados.
+- productoActual: representa el producto que se está creando o editando.
+- mostrarFormulario: controla si se muestra el formulario de creación/edición.
+- mensajeError: almacena mensajes de error para mostrar en la interfaz.
+-->
+
+<h3>ProductIndex</h3>
+
+@code {
+    private List<Producto> productos = new();
+    private Producto productoActual = new();
+    private bool mostrarFormulario = false;
+    private string? mensajeError;
+}

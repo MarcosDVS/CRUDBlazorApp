@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRUD.Shared", "CRUD.Shared\CRUD.Shared.csproj", "{5B6D0E7C-38EF-4090-AFFA-DA8ECB3561F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRUD.Shared", "CRUD.Shared\CRUD.Shared.csproj", "{5B6D0E7C-38EF-4090-AFFA-DA8ECB3561F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRUD.Backend", "CRUD.Backend\CRUD.Backend.csproj", "{27C220C7-0629-4FCB-97D8-FE095F7787F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRUD.Backend", "CRUD.Backend\CRUD.Backend.csproj", "{27C220C7-0629-4FCB-97D8-FE095F7787F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRUD.Frontend", "CRUD.Frontend\CRUD.Frontend.csproj", "{42A6B827-187C-4342-B545-28839677D831}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRUD.Frontend", "CRUD.Frontend\CRUD.Frontend.csproj", "{42A6B827-187C-4342-B545-28839677D831}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

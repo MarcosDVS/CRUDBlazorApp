@@ -17,6 +17,17 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer("name=LocalConnection"));
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowSpecificOrigins", policy =>
+            {
+                // Allow specific origins for CORS or development purposes from localhost of the frontend
+                policy.WithOrigins("https://localhost:7010")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            });
+
+        });
 
 
         var app = builder.Build();
@@ -29,7 +40,7 @@ public class Program
         }
 
         app.UseHttpsRedirection();
-
+        app.UseCors("AllowSpecificOrigins");
         app.UseAuthorization();
 
 

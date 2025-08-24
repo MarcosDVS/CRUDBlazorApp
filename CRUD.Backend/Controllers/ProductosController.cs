@@ -6,6 +6,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CRUD.Backend.Controllers;
 
+// Este controlador expone la API en la ruta "api/productos".
+// El atributo [Route("api/[controller]")] toma el nombre de la clase (ProductosController)
+// y lo convierte en parte de la URL (quitando "Controller").
+// De esta forma, el frontend puede comunicarse con este backend usando rutas como:
+// - GET    api/productos        -> obtener todos los productos
+// - GET    api/productos/{id}   -> obtener un producto por ID
+// - POST   api/productos        -> crear un nuevo producto
+// - PUT    api/productos/{id}   -> actualizar un producto existente
+// - DELETE api/productos/{id}   -> eliminar un producto por ID
 [Route("api/[controller]")]
 [ApiController]
 public class ProductosController : ControllerBase

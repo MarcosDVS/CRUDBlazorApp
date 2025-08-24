@@ -1,3 +1,4 @@
+using CRUD.Frontend.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -12,6 +13,7 @@ namespace CRUD.Frontend
             builder.RootComponents.Add<HeadOutlet>("head::after");
             var url = "https://localhost:7002"; // Adjust the URL to match your backend API endpoint
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(url) });
+            builder.Services.AddScoped<IRepository, Repository>();
 
             await builder.Build().RunAsync();
         }

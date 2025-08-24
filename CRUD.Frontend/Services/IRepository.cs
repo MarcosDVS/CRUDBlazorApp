@@ -10,5 +10,5 @@ public interface IRepository
     
     Task<T> GetByIdAsync<T>(string url, int id);
 
-    Task<object> DeleteAsync(string url, int id);
+    Task<object> DeleteAsync(string url);
 }

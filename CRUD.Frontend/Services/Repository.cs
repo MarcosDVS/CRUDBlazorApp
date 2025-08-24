@@ -5,6 +5,18 @@ namespace CRUD.Frontend.Services;
 // Clase que implementa un repositorio genérico para consumir una API REST.
 // Sirve para centralizar todas las operaciones CRUD (Create, Read, Update, Delete)
 // utilizando HttpClient para comunicarse con el backend.
+
+// 🔹 Nota importante:
+// Aunque esta clase se llame "Repository", en realidad su función es más similar
+// a un "Service". En buenas prácticas de arquitectura, cada modelo o controlador
+// del backend debería tener su respectivo servicio en el frontend.
+// 
+// Ejemplo de correspondencia:
+//   - Backend: ProductosController   ⇔  Frontend: ProductServices
+//   - Backend: ClientesController    ⇔  Frontend: ClientServices
+//
+// 👉 En este caso particular, lo recomendable sería renombrar esta clase
+// de Repository a ProductoServices para mantener la consistencia.
 public class Repository : IRepository
 {
     private readonly HttpClient _httpClient;
@@ -26,7 +38,7 @@ public class Repository : IRepository
 
     // Método DELETE: elimina un recurso en la API según su ID.
     // url → endpoint de la API (ej: "api/productos/5").
-    public async Task<object> DeleteAsync(string url, int id)
+    public async Task<object> DeleteAsync(string url)
     {
         var response = await _httpClient.DeleteAsync(url); // Hace la petición DELETE.
         response.EnsureSuccessStatusCode(); // Lanza excepción si falla.

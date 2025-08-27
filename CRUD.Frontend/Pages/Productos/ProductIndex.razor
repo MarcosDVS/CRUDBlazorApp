@@ -8,143 +8,138 @@ Se encarga de administrar la lista de productos en el frontend.
 -->
 @page "/productos"
 
-<h3 class="text-center mt-4">Gestión de Productos</h3>
-<div class="d-flex justify-content-end mb-3">
-    <button class="btn btn-primary" @onclick="MostrarFormulario">
-        <i class="fas fa-plus"></i> Agregar Producto
+<div class="d-flex justify-content-between align-items-center my-4">
+    <!-- Título centrado -->
+    <h3 class="text-primary fw-bold mb-0 text-center flex-grow-1">
+        Gestión de Productos
+    </h3>
+
+    <!-- Botón al extremo derecho -->
+    <button class="btn btn-primary shadow-sm ms-3" @onclick="MostrarFormulario">
+        <i class="fas fa-plus me-1"></i> Agregar
     </button>
 </div>
 
+
+@* -------------------- ALERTA -------------------- *@
 @if (mostrarAlerta)
 {
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show text-center mx-auto w-50" role="alert">
         @mensajeAlerta
-        <button type="button" class="btn-close" @onclick="() => mostrarAlerta = false"></button>
-    </div>
+            <button type="button" class="btn-close" @onclick="() => mostrarAlerta = false"></button>
+        </div>
 }
 
-
+@* -------------------- TABLA DE PRODUCTOS -------------------- *@
 @if (productos is null)
 {
-    <div class="text-center">
-        <div class="spinner-border text-primary" role="status"></div>
-        <p>Cargando productos...</p>
-    </div>
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Cargando productos...</p>
+        </div>
 }
 else if (!productos.Any())
 {
-    <div class="alert alert-info text-center">No hay productos disponibles.</div>
+        <div class="alert alert-info text-center">No hay productos disponibles.</div>
 }
 else
 {
-    <table class="table table-striped table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>#</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Precio</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var (p, index) in productos.Select((p, i) => (p, i + 1)))
-            {
-                <tr>
-                    <td>@index</td>
-                    <td>@p.Nombre</td>
-                    <td>@p.Descripcion</td>
-                    <td>@p.Precio.ToString("C")</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm me-2" @onclick="() => EditarProducto(p)">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <button class="btn btn-danger btn-sm" @onclick="() => EliminarProducto(p.Id)">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        <div class="table-responsive shadow-sm rounded">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-primary text-center">
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var (p, index) in productos.Select((p, i) => (p, i + 1)))
+                {
+                            <tr>
+                                <td class="text-center">@index</td>
+                                <td>@p.Nombre</td>
+                                <td>@p.Descripcion</td>
+                                <td>@p.Precio.ToString("C")</td>
+                                <td class="text-center">
+                                    <button class="btn btn-warning btn-sm me-2 shadow-sm" @onclick="() => EditarProducto(p)">
+                                        <i class="fas fa-edit fw-bold"> Edit</i>
+                                    </button>
+                                    <button class="btn btn-danger btn-sm shadow-sm" @onclick="() => EliminarProducto(p.Id)">
+                                        <i class="fas fa-trash fw-bold"> Delete</i>
+                                    </button>
+                                </td>
+                            </tr>
+                }
+                </tbody>
+            </table>
+        </div>
 }
 
+@* -------------------- MODAL DE FORMULARIO -------------------- *@
 @if (mostrarFormulario)
 {
-    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">@(productoActual.Id == 0 ? "Agregar Producto" : "Editar Producto")</h5>
-                    <button type="button" class="btn-close" @onclick="Cancelar"></button>
-                </div>
-                <div class="modal-body">
-                    <EditForm Model="productoActual" OnValidSubmit="GuardarProducto">
-                        <div class="mb-3">
-                            <label class="form-label">Nombre:</label>
-                            <InputText class="form-control" @bind-Value="productoActual.Nombre" required />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Descripción:</label>
-                            <InputText class="form-control" @bind-Value="productoActual.Descripcion" required />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Precio:</label>
-                            <InputNumber class="form-control" @bind-Value="productoActual.Precio" required />
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-success me-2">
-                                <i class="fas fa-save"></i> Guardar
-                            </button>
-                            <button type="button" class="btn btn-secondary" @onclick="Cancelar">
-                                <i class="fas fa-times"></i> Cancelar
-                            </button>
-                        </div>
-                    </EditForm>
+        <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content shadow rounded-4 border-0">
+                    <div class="modal-header bg-primary text-white rounded-top-4">
+                        <h5 class="modal-title">@((productoActual.Id == 0) ? "Agregar Producto" : "Editar Producto")</h5>
+                        <button type="button" class="btn-close btn-close-white" @onclick="Cancelar"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <EditForm Model="productoActual" OnValidSubmit="GuardarProducto">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Nombre</label>
+                                <InputText class="form-control" @bind-Value="productoActual.Nombre" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Descripción</label>
+                                <InputText class="form-control" @bind-Value="productoActual.Descripcion" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Precio</label>
+                                <InputNumber class="form-control" @bind-Value="productoActual.Precio" required />
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-success me-2 shadow-sm">
+                                    <i class="fas fa-save me-1"></i> Guardar
+                                </button>
+                                <button type="button" class="btn btn-secondary shadow-sm" @onclick="Cancelar">
+                                    <i class="fas fa-times me-1"></i> Cancelar
+                                </button>
+                            </div>
+                        </EditForm>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 }
 
 @code {
-    // Lista que almacena todos los productos obtenidos desde la API.
     private List<Producto> productos = new();
-
-    // Representa el producto actual que se está creando o editando.
     private Producto productoActual = new();
-
-    // Controla si se muestra o no el formulario de creación/edición.
     private bool mostrarFormulario = false;
-
-    // Mensaje que se mostrará en pantalla como alerta (ej: éxito al guardar/eliminar).
     private string? mensajeAlerta;
-
-    // Bandera que indica si la alerta debe mostrarse en la interfaz.
     private bool mostrarAlerta = false;
 
-    // Inyección del repositorio para hacer peticiones HTTP a la API (GET, POST, PUT, DELETE).
     [Inject] private IRepository Repository { get; set; } = null!;
-
-    // Inyección del NavigationManager para manejar la navegación dentro de la app Blazor.
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
-    // Método que se ejecuta automáticamente cuando el componente se inicializa.
-    // Aquí se carga la lista de productos desde la API al iniciar la página.
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync() => await CargarProductos();
+
+    private async Task CargarProductos()
     {
-        var url = "api/productos";
-        productos = await Repository.GetAsync<List<Producto>>(url);
+        productos = await Repository.GetAsync<List<Producto>>("api/productos");
     }
 
-    // Muestra el formulario vacío para crear un nuevo producto.
     private void MostrarFormulario()
     {
-        productoActual = new Producto(); // Se inicializa un nuevo producto en blanco.
+        productoActual = new Producto();
         mostrarFormulario = true;
     }
 
-    // Prepara el formulario con los datos del producto seleccionado para edición.
     private void EditarProducto(Producto producto)
     {
         productoActual = new Producto
@@ -157,48 +152,26 @@ else
         mostrarFormulario = true;
     }
 
-    // Guarda un producto en la base de datos.
-    // Si el productoActual.Id == 0 → es nuevo, se hace POST.
-    // Si ya tiene Id → se hace PUT (actualización).
     private async Task GuardarProducto()
     {
-        var url1 = "api/productos";
-        var url2 = $"api/productos/{productoActual.Id}";
-
         if (productoActual.Id == 0)
-            await Repository.PostAsync(url1, productoActual); // Crear nuevo producto.
+            await Repository.PostAsync("api/productos", productoActual);
         else
-            await Repository.PutAsync(url2, productoActual);  // Actualizar producto existente.
+            await Repository.PutAsync($"api/productos/{productoActual.Id}", productoActual);
 
-        // Recargar la lista de productos después de guardar.
-        productos = await Repository.GetAsync<List<Producto>>(url1);
-
-        // Ocultar formulario y mostrar mensaje de éxito.
+        await CargarProductos();
         mostrarFormulario = false;
         mensajeAlerta = "Producto guardado exitosamente.";
         mostrarAlerta = true;
     }
 
-    // Elimina un producto por su ID.
     private async Task EliminarProducto(int id)
     {
-        var url1 = "api/productos";
-        var url2 = $"api/productos/{productoActual.Id}";
-
-        await Repository.DeleteAsync(url2); // Elimina en la API.
-
-        // Recargar la lista de productos después de eliminar.
-        productos = await Repository.GetAsync<List<Producto>>(url1);
-
-        // Mostrar mensaje de confirmación.
+        await Repository.DeleteAsync($"api/productos/{id}");
+        await CargarProductos();
         mensajeAlerta = "Producto eliminado exitosamente.";
         mostrarAlerta = true;
     }
 
-    // Cancela la creación o edición de un producto y oculta el formulario.
-    private void Cancelar()
-    {
-        mostrarFormulario = false;
-    }
-
+    private void Cancelar() => mostrarFormulario = false;
 }

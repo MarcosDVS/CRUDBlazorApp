@@ -37,26 +37,14 @@ public class ProductosController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> PostAsync(Producto producto)
     {
+        if (producto == null)
+            return BadRequest("Producto cannot be null");
 
-        try
-        {
-            if (producto == null)
-            {
-                return BadRequest("Producto cannot be null");
-            }
-            _context.Productos.Add(producto);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetAsync), new { id = producto.Id }, producto);
-        }
-        catch (DbUpdateException ex)
-        {
+        _context.Productos.Add(producto);
+        await _context.SaveChangesAsync();
 
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException!.Message);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        }
+        // Devolver siempre el producto creado (con su Id)
+        return Ok(producto);
     }
 
     [HttpGet("{id}")]

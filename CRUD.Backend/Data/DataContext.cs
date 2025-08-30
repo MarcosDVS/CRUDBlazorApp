@@ -10,5 +10,6 @@ namespace CRUD.Backend.Data
         }
 
         public DbSet<Producto> Productos { get; set; }
+        public DbSet<Auto> Autos { get; set; }
     }
 }

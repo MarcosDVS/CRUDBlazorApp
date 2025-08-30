@@ -16,7 +16,12 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        #region Configuracion de la base de datos -- Conexion a SQL Server
         builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer("name=LocalConnection"));
+        #endregion
+
+        #region Configuracion de CORS -- Permitir conexiones desde el frontend
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowSpecificOrigins", policy =>
@@ -28,6 +33,7 @@ public class Program
             });
 
         });
+        #endregion
 
 
         var app = builder.Build();

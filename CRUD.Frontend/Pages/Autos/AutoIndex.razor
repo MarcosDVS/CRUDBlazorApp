@@ -1,0 +1,117 @@
+﻿@page "/autos"
+
+<div class="d-flex justify-content-between align-items-center my-4">
+
+    <!-- Título centrado -->
+    <h3 class="flex-grow-1 text-left text-primary fw-bold mb-0">
+        Gestión de Autos
+    </h3>
+
+    <!-- Buscador -->
+    <div class="input-group d-print-none w-auto">
+        <input type="text" class="form-control border-0 border-bottom"
+               placeholder="Buscar auto" @bind="Filtro">
+        <button class="btn btn-outline-secondary border-0 border-bottom"
+                type="button" @onclick="()=>CargarAutos()">
+            <i class="fas fa-search">🔎</i>
+        </button>
+    </div>
+
+    <!-- Botón al extremo derecho -->
+    <button class="btn btn-primary shadow-sm ms-3" @onclick="ControlarFormulario">
+        <i class="fas fa-plus me-1"></i> Agregar
+    </button>
+</div>
+
+
+@* -------------------- ALERTA -------------------- *@
+@if (mostrarAlerta)
+{
+    <div class="alert alert-success alert-dismissible fade show text-center mx-auto w-50" role="alert">
+        @mensajeAlerta
+        <button type="button" class="btn-close" @onclick="() => mostrarAlerta = false"></button>
+    </div>
+}
+
+@* -------------------- TABLA DE PRODUCTOS -------------------- *@
+@if (Autos is null)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2">Cargando productos...</p>
+    </div>
+}
+else if (!Autos.Any())
+{
+    <div class="alert alert-info text-center">No hay productos disponibles.</div>
+}
+else
+{
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-primary">
+                <tr>
+                    <th>#</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Year</th>
+                    <th>Precio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var (p, index) in Autos.Select((p, i) => (p, i + 1)))
+                {
+                    <tr>
+                        <td class="text-center">@index</td>
+                        <td>@p.Marca</td>
+                        <td>@p.Modelo</td>
+                        <td>@p.Year</td>
+                        <td>@p.Precio.ToString("C")</td>
+                        <td class="text-center">
+                            <button class="btn btn-warning btn-sm me-2 shadow-sm">
+                                <i class="fas fa-edit fw-bold"> Edit</i>
+                            </button>
+                            <button class="btn btn-danger btn-sm shadow-sm">
+                                <i class="fas fa-trash fw-bold"> Delete</i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+
+@code {
+    public string TituloForm => request.Id == 0 ?
+    "Agregar auto" : "Modificar auto";
+
+    private List<Auto> Autos = new();
+    private Auto request = new();
+    private bool formularioVisible = false;
+    private string? mensajeAlerta;
+    private bool mostrarAlerta = false;
+    public string Filtro { get; set; } = "";
+
+    [Inject] private NavigationManager Navigation { get; set; } = null!;
+
+    [Inject] private IAutoServices AutoService { get; set; } = null!;
+
+    private async Task CargarAutos()
+    {
+        var result = await AutoService.Consultar(Filtro);
+        if (result != null)
+            Autos = result;
+        //Autos = await AutoService.Consultar(Filtro);
+    }
+    protected override async Task OnInitializedAsync() => await CargarAutos();
+
+    private void ControlarFormulario()
+    {
+        formularioVisible = !formularioVisible;
+        request = new Auto();
+    }
+}

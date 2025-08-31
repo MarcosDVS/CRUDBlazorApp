@@ -69,10 +69,10 @@ else
                         <td>@p.Year</td>
                         <td>@p.Precio.ToString("C")</td>
                         <td class="text-center">
-                            <button class="btn btn-warning btn-sm me-2 shadow-sm">
+                            <button class="btn btn-warning btn-sm me-2 shadow-sm" @onclick="() => Editar(p)">
                                 <i class="fas fa-edit fw-bold"> Edit</i>
                             </button>
-                            <button class="btn btn-danger btn-sm shadow-sm">
+                            <button class="btn btn-danger btn-sm shadow-sm" @onclick="() => Eliminar(p.Id)">
                                 <i class="fas fa-trash fw-bold"> Delete</i>
                             </button>
                         </td>
@@ -83,6 +83,48 @@ else
     </div>
 }
 
+@* -------------------- MODAL DE FORMULARIO -------------------- *@
+@if (formularioVisible)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow rounded-4 border-0">
+                <div class="modal-header bg-primary text-white rounded-top-4">
+                    <h5 class="modal-title">@TituloForm</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="ControlarFormulario"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <EditForm Model="request" OnValidSubmit="Send">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Marca</label>
+                            <InputText class="form-control" @bind-Value="request.Marca" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Modelo</label>
+                            <InputText class="form-control" @bind-Value="request.Modelo" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Año</label>
+                            <InputNumber class="form-control" @bind-Value="request.Year" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Precio</label>
+                            <InputNumber class="form-control" @bind-Value="request.Precio" required />
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-success me-2 shadow-sm">
+                                <i class="fas fa-save me-1"></i> Guardar
+                            </button>
+                            <button type="button" class="btn btn-secondary shadow-sm" @onclick="ControlarFormulario">
+                                <i class="fas fa-times me-1"></i> Cancelar
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 
 @code {
@@ -100,6 +142,8 @@ else
 
     [Inject] private IAutoServices AutoService { get; set; } = null!;
 
+    [Inject] private IJSRuntime JS { get; set; } = null!;
+
     private async Task CargarAutos()
     {
         var result = await AutoService.Consultar(Filtro);
@@ -114,4 +158,71 @@ else
         formularioVisible = !formularioVisible;
         request = new Auto();
     }
+
+    private void Editar(Auto auto)
+    {
+        request = new Auto
+            {
+                Id = auto.Id,
+                Marca = auto.Marca,
+                Modelo = auto.Modelo,
+                Year = auto.Year,
+                Precio = auto.Precio
+            };
+
+        formularioVisible = true;
+    }
+
+    private async Task Send()
+    {
+        try
+        {
+            if (request.Id == 0) // Nuevo auto
+            {
+                await AutoService.Crear(request);
+                mensajeAlerta = "Auto agregado exitosamente.";
+            }
+            else // Editar auto
+            {
+                await AutoService.Modificar(request.Id, request);
+                mensajeAlerta = "Auto actualizado exitosamente.";
+            }
+
+            mostrarAlerta = true;
+            formularioVisible = false;
+            await CargarAutos();
+        }
+        catch (Exception ex)
+        {
+            mostrarAlerta = true;
+            mensajeAlerta = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task Eliminar(int id)
+    {
+        var confirm = await JS.InvokeAsync<bool>(
+            "confirm",
+            "¿Estás seguro de que deseas eliminar este auto?"
+        );
+
+        if (confirm)
+        {
+            try
+            {
+                await AutoService.Eliminar(id);
+
+                mensajeAlerta = "Auto eliminado correctamente.";
+                mostrarAlerta = true;
+
+                await CargarAutos();
+            }
+            catch (Exception ex)
+            {
+                mensajeAlerta = $"Error al eliminar: {ex.Message}";
+                mostrarAlerta = true;
+            }
+        }
+    }
+
 }
